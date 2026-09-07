@@ -1,0 +1,82 @@
+# ============================================================
+# TASK 3.2 - DATABASE MIGRATION TO AMAZON RDS
+# ============================================================
+
+# Create a backup/export of the local WordPress database
+mysqldump -u wp_user -p wordpress_db > wordpress_backup.sql
+
+# Verify that the database backup was created
+ls -lh wordpress_backup.sql
+
+
+# ------------------------------------------------------------
+# Connect to the Amazon RDS MySQL instance
+# ------------------------------------------------------------
+
+mysql -h wordpress-rds.chegsy2q4e69.ap-southeast-2.rds.amazonaws.com -u admin -p
+
+
+# ------------------------------------------------------------
+# Create the WordPress database on Amazon RDS
+# Run these commands after connecting to MySQL
+# ------------------------------------------------------------
+
+CREATE DATABASE wordpress_db;
+
+EXIT;
+
+
+# ------------------------------------------------------------
+# Import the local WordPress database backup into Amazon RDS
+# ------------------------------------------------------------
+
+mysql -h wordpress-rds.chegsy2q4e69.ap-southeast-2.rds.amazonaws.com -u admin -p wordpress_db < wordpress_backup.sql
+
+
+# ------------------------------------------------------------
+# Connect to RDS again to verify the migration
+# ------------------------------------------------------------
+
+mysql -h wordpress-rds.chegsy2q4e69.ap-southeast-2.rds.amazonaws.com -u admin -p
+
+
+# ------------------------------------------------------------
+# Verify database and WordPress tables
+# Run these inside MySQL
+# ------------------------------------------------------------
+
+SHOW DATABASES;
+
+USE wordpress_db;
+
+SHOW TABLES;
+
+SELECT ID, user_login, user_email FROM wp_users;
+
+EXIT;
+
+
+# ------------------------------------------------------------
+# Configure WordPress to use Amazon RDS
+# ------------------------------------------------------------
+
+sudo nano /var/www/html/wp-config.php
+
+
+# WordPress database configuration was updated to use:
+# DB_NAME = wordpress_db
+# DB_USER = admin
+# DB_HOST = Amazon RDS endpoint
+#
+# IMPORTANT:
+# The actual database password is intentionally NOT included
+# in this repository.
+
+
+# ------------------------------------------------------------
+# Verify WordPress RDS configuration
+# ------------------------------------------------------------
+
+grep DB_HOST /var/www/html/wp-config.php
+
+grep DB_USER /var/www/html/wp-config.php

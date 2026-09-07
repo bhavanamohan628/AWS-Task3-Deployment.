@@ -1,0 +1,20 @@
+# ============================================================
+# Task 3.4 - AWS Systems Manager (SSM) Session Manager
+# Verification Commands
+# ============================================================
+
+# Check that the Amazon SSM Agent is installed, enabled,
+# and actively running on the backend EC2 instance
+sudo systemctl status amazon-ssm-agent
+
+
+# Verify the user of the Session Manager terminal session
+whoami
+
+
+# Verify the hostname of the backend EC2 instance
+hostname
+
+
+# Verify the current working directory
+pwd

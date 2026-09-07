@@ -1,0 +1,83 @@
+# ============================================================
+# Task 3.1 - WordPress / LAMP Deployment on Amazon Linux 2023
+# ============================================================
+
+
+# 1. Update system packages
+sudo dnf update -y
+
+
+# 2. Install Apache web server
+sudo dnf install -y httpd
+
+
+# 3. Start and enable Apache
+sudo systemctl start httpd
+sudo systemctl enable httpd
+
+
+# 4. Install PHP and required PHP modules
+sudo dnf install -y php php-mysqlnd php-fpm php-json php-gd php-mbstring
+
+
+# 5. Install MariaDB
+sudo dnf install -y mariadb105-server
+
+
+# 6. Start and enable MariaDB
+sudo systemctl start mariadb
+sudo systemctl enable mariadb
+
+
+# ============================================================
+# Local WordPress Database Setup
+# ============================================================
+
+# 7. Connect to MariaDB
+sudo mysql -u root
+
+
+# Run the following commands inside MariaDB:
+
+CREATE DATABASE wordpress_db;
+
+CREATE USER 'wp_user'@'localhost'
+IDENTIFIED BY '<DB_PASSWORD>';
+
+GRANT ALL PRIVILEGES ON wordpress_db.* TO 'wp_user'@'localhost';
+
+FLUSH PRIVILEGES;
+
+EXIT;
+
+
+# ============================================================
+# WordPress Installation
+# ============================================================
+
+# 8. Move to temporary directory
+cd /tmp
+
+
+# 9. Download WordPress
+wget https://wordpress.org/latest.tar.gz
+
+
+# 10. Extract WordPress
+tar -xzf latest.tar.gz
+
+
+# 11. Copy WordPress files to Apache web root
+sudo cp -r wordpress/* /var/www/html/
+
+
+# 12. Set Apache ownership
+sudo chown -R apache:apache /var/www/html/
+
+
+# 13. Set appropriate permissions
+sudo chmod -R 755 /var/www/html/
+
+
+# 14. Restart Apache
+sudo systemctl restart httpd

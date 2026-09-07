@@ -1,0 +1,63 @@
+# ============================================================
+# TASK 3.2 - WORDPRESS FILE BACKUP AND RESTORE USING AMAZON S3
+# ============================================================
+
+# ------------------------------------------------------------
+# Create a compressed backup of the WordPress application files
+# ------------------------------------------------------------
+
+sudo tar -czf wordpress-files-backup.tar.gz /var/www/html/
+
+
+# Verify that the backup archive was created
+ls -lh wordpress-files-backup.tar.gz
+
+
+# ------------------------------------------------------------
+# Verify the AWS identity / IAM role used by the EC2 instance
+# ------------------------------------------------------------
+
+aws sts get-caller-identity
+
+
+# ------------------------------------------------------------
+# Upload the WordPress backup to Amazon S3
+# ------------------------------------------------------------
+
+aws s3 cp wordpress-files-backup.tar.gz s3://bhavana-wordpress-backup-2026/
+
+
+# ------------------------------------------------------------
+# Verify that the backup exists in the S3 bucket
+# ------------------------------------------------------------
+
+aws s3 ls s3://bhavana-wordpress-backup-2026/
+
+
+# ------------------------------------------------------------
+# Restore test
+# Download the backup from S3 to the EC2 instance
+# ------------------------------------------------------------
+
+aws s3 cp s3://bhavana-wordpress-backup-2026/wordpress-files-backup.tar.gz ~/restored-wordpress-files.tar.gz
+
+
+# ------------------------------------------------------------
+# Create a separate directory for testing the restore
+# ------------------------------------------------------------
+
+mkdir -p ~/wordpress-restore-test
+
+
+# ------------------------------------------------------------
+# Extract the downloaded WordPress backup
+# ------------------------------------------------------------
+
+tar -xzf ~/restored-wordpress-files.tar.gz -C ~/wordpress-restore-test
+
+
+# ------------------------------------------------------------
+# Verify that the WordPress files were successfully restored
+# ------------------------------------------------------------
+
+ls -lah ~/wordpress-restore-test/var/www/html
